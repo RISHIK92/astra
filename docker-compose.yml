@@ -17,6 +17,23 @@ services:
       - "traefik.http.services.astra.loadbalancer.server.port=11434"
       - "traefik.docker.network=nativex-net"
 
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    entrypoint: >
+      sh -c "
+      echo 'Waiting for Astra API to come online...'
+      until ollama pull qwen2.5-coder:1.5b; do
+        echo 'Astra is not ready yet. Retrying in 2 seconds...'
+        sleep 2
+      done
+      echo 'Model pulled successfully! Shutting down init container.'
+      "
+
 networks:
   nativex-net:
     external: true
