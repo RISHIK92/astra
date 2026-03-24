@@ -1,0 +1,24 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - nativex-net
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.astra.rule=Host(`astra.rishik.codes`)"
+      - "traefik.http.routers.astra.entrypoints=websecure"
+      - "traefik.http.routers.astra.tls.certresolver=myresolver"
+      - "traefik.http.services.astra.loadbalancer.server.port=11434"
+      - "traefik.docker.network=nativex-net"
+
+networks:
+  nativex-net:
+    external: true
+volumes:
+  ollama_data:
