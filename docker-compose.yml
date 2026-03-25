@@ -24,6 +24,8 @@ services:
       - ollama
     environment:
       - OLLAMA_HOST=ollama:11434
+    networks:
+      - nativex-net
     entrypoint: |
       sh -c "
         echo 'Waiting for Astra API to come online...'
