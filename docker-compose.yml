@@ -27,10 +27,17 @@ services:
     entrypoint: >
       sh -c "
       echo 'Waiting for Astra API to come online...'
-      until ollama pull qwen2.5-coder:1.5b; do
+      until ollama list; do
         echo 'Astra is not ready yet. Retrying in 2 seconds...'
         sleep 2
       done
+
+      echo 'Removing old 1.5b model (if it exists)...'
+      ollama rm qwen2.5-coder:1.5b || true
+
+      echo 'Pulling new 3b model...'
+      ollama pull qwen2.5-coder:3b
+
       echo 'Model pulled successfully! Shutting down init container.'
       "
 
